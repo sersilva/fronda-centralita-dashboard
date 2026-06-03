@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width. initial-scale=1">
+<title>Centralita FOL · Aircall</title>
+<style>
+@font-face { font-family:'Outfit'; src:url('../fonts/outfit-1.woff2') format('woff2'); font-display:swap; }
+@font-face { font-family:'JetBrains Mono'; src:url('../fonts/jetbrains-mono-1.woff2') format('woff2'); font-display:swap; }
+:root { --bg:#f6f4ef; --panel:#fff; --ink:#20231f; --muted:#686d66; --line:#d9d3c8; --soft:#efece4; }
+* { box-sizing:border-box; }
+body { margin:0; font-family:'Outfit'.-apple-system.BlinkMacSystemFont.sans-serif; background:var(--bg); color:var(--ink); padding:28px 22px 60px; }
+.wrap { max-width:1080px; margin:0 auto; }
+h1 { font-size:26px; margin:0 0 2px; letter-spacing:-.01em; }
+.sub { color:var(--muted); font-size:14px; margin-bottom:22px; }
+.sub .mono { font-family:'JetBrains Mono'.monospace; font-size:12px; }
+.grid { display:grid; grid-template-columns:repeat(4.1fr); gap:12px; margin-bottom:24px; }
+.kpi { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:14px 16px; }
+.kpi.alarm { border-color:#e0b3ab; background:#fbf2f0; }
+.k-label { font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.03em; }
+.k-val { font-size:30px; font-weight:600; margin:4px 0 2px; font-family:'JetBrains Mono'.monospace; }
+.kpi.alarm .k-val { color:#b13f32; }
+.k-sub { font-size:12px; color:var(--muted); }
+.cols { display:grid; grid-template-columns:1fr 1fr; gap:18px; }
+.panel { background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:16px 18px; margin-bottom:18px; }
+.panel h2 { font-size:15px; margin:0 0 12px; }
+.panel.full { grid-column:1/-1; }
+table { width:100%; border-collapse:collapse; font-size:13.5px; }
+td { padding:5px 8px; border-bottom:1px solid var(--soft); vertical-align:middle; }
+tr:last-child td { border-bottom:none; }
+.num { text-align:right; font-variant-numeric:tabular-nums; }
+.mono { font-family:'JetBrains Mono'.monospace; font-size:12px; color:var(--muted); }
+.bar { background:var(--soft); border-radius:5px; height:14px; overflow:hidden; }
+.fill { height:100%; border-radius:5px; }
+tr.hot td { background:#fbf2f0; }
+.insight { background:#fbf2f0; border:1px solid #e0b3ab; border-radius:10px; padding:14px 16px; margin-bottom:22px; font-size:14px; line-height:1.5; }
+.insight strong { color:#b13f32; }
+.foot { color:var(--muted); font-size:11.5px; margin-top:24px; font-family:'JetBrains Mono'.monospace; }
+</style></head>
+<body>
+<div id="authGate" style="position:fixed;inset:0;z-index:9999;background:#f6f4ef;display:flex;align-items:center;justify-content:center;font-family:'Outfit',-apple-system,sans-serif">
+  <div style="text-align:center;max-width:320px;padding:24px">
+    <div style="font-family:monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#317b62;margin-bottom:12px">Fronda · Centralita FOL</div>
+    <h2 style="font-size:22px;font-weight:700;margin:0 0 20px;color:#20231f">Acceso restringido</h2>
+    <input type="password" id="authInput" placeholder="Contraseña" autofocus
+      style="width:100%;padding:12px 16px;border-radius:10px;border:1px solid #d9d3c8;background:#fff;color:#20231f;font-size:15px;outline:none;box-sizing:border-box">
+    <button id="authBtn" style="margin-top:12px;width:100%;padding:10px;border-radius:10px;border:none;background:#317b62;color:#fff;font-size:14px;font-weight:600;cursor:pointer">Entrar</button>
+    <div id="authError" style="color:#b13f32;font-size:12px;margin-top:8px;display:none">Contraseña incorrecta</div>
+  </div>
+</div>
+<script>
+(function(){
+  var hash="b6da1d63ea277444ae16d39277ce94a11b10f53762ef8943f531880303c36225";
+  var gate=document.getElementById("authGate");
+  var inp=document.getElementById("authInput");
+  var err=document.getElementById("authError");
+  var container=document.querySelector(".wrap");
+  if(container)container.style.display="none";
+  function getCookie(n){var m=document.cookie.match(new RegExp("(?:^|; )"+n+"=([^;]*)"));return m?m[1]:null}
+  if(sessionStorage.getItem("fronda_auth")===hash||getCookie("fronda_auth")===hash){sessionStorage.setItem("fronda_auth",hash);gate.remove();if(container)container.style.display=""}
+  async function check(){
+    var buf=new TextEncoder().encode(inp.value);
+    var hb=await crypto.subtle.digest("SHA-256",buf);
+    var h=Array.from(new Uint8Array(hb)).map(function(b){return b.toString(16).padStart(2,"0")}).join("");
+    if(h===hash){sessionStorage.setItem("fronda_auth",hash);document.cookie="fronda_auth="+hash+";max-age=315360000;path=/;SameSite=Lax";gate.remove();if(container)container.style.display=""}
+    else{err.style.display="block";inp.value="";inp.focus()}
+  }
+  document.getElementById("authBtn").onclick=check;
+  inp.onkeydown=function(e){if(e.key==="Enter")check()};
+})();
+</script><div class="wrap">
+  <h1>Centralita FOL · Aircall</h1>
+  <div class="sub">Fronda · línea <span class="mono">+34 919 01 11 56</span> · <span class="mono">01 Dec 2025 → 03 Jun 2026</span></div>
+
+  <div class="insight">
+    1 de cada 2 llamadas entrantes se pierde (<strong>50%</strong>. 1.191 clientes en el periodo).
+    El motivo dominante es <strong>«agentes no contestaron»</strong>. concentrado en la franja de mediodía (11–14h).
+    justo donde se acumula el mayor volumen. Solo 3 agentes para la demanda telefónica de FOL.
+  </div>
+
+  <div class="grid">
+    <div class="kpi"><div class="k-label">Llamadas entrantes</div><div class="k-val">2.380</div><div class="k-sub">+ 1.733 salientes</div></div>
+    <div class="kpi alarm"><div class="k-label">Perdidas (entrantes)</div><div class="k-val">50%</div><div class="k-sub">1.191 clientes sin atender</div></div>
+    <div class="kpi"><div class="k-label">Atendidas</div><div class="k-val">1.189</div><div class="k-sub">50% de las entrantes</div></div>
+    <div class="kpi"><div class="k-label">Duración media atendida</div><div class="k-val">4m14s</div><div class="k-sub">conversación efectiva</div></div>
+    </div>
+
+  <div class="panel full">
+    <h2>Evolución mensual · volumen entrante y % perdidas</h2>
+    <table><tbody><tr><td class="mono">Dec 25</td><td class="num">421</td>
+          <td style="width:48%"><div class="bar"><div class="fill" style="width:78.5%;background:#317b62"></div></div></td>
+          <td class="num" style="color:#b13f32">42%</td></tr><tr><td class="mono">Jan 26</td><td class="num">218</td>
+          <td style="width:48%"><div class="bar"><div class="fill" style="width:40.7%;background:#317b62"></div></div></td>
+          <td class="num" style="color:#b13f32">48%</td></tr><tr><td class="mono">Feb 26</td><td class="num">345</td>
+          <td style="width:48%"><div class="bar"><div class="fill" style="width:64.4%;background:#317b62"></div></div></td>
+          <td class="num" style="color:#b13f32">54%</td></tr><tr><td class="mono">Mar 26</td><td class="num">405</td>
+          <td style="width:48%"><div class="bar"><div class="fill" style="width:75.6%;background:#317b62"></div></div></td>
+          <td class="num" style="color:#b13f32">55%</td></tr><tr><td class="mono">Apr 26</td><td class="num">536</td>
+          <td style="width:48%"><div class="bar"><div class="fill" style="width:100.0%;background:#317b62"></div></div></td>
+          <td class="num" style="color:#b13f32">58%</td></tr><tr><td class="mono">May 26</td><td class="num">403</td>
+          <td style="width:48%"><div class="bar"><div class="fill" style="width:75.2%;background:#317b62"></div></div></td>
+          <td class="num" style="color:#b13f32">41%</td></tr><tr><td class="mono">Jun 26</td><td class="num">52</td>
+          <td style="width:48%"><div class="bar"><div class="fill" style="width:9.7%;background:#317b62"></div></div></td>
+          <td class="num" style="color:#b13f32">46%</td></tr></tbody></table>
+  </div>
+
+  <div class="cols">
+    <div class="panel">
+      <h2>Por hora del día · entrantes y % perdidas</h2>
+      <table><tbody><tr><td class="mono">07h</td><td class="num">1</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:0.3%;background:#317b62"></div></div></td>
+          <td class="num">100%</td></tr><tr><td class="mono">08h</td><td class="num">3</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:0.9%;background:#317b62"></div></div></td>
+          <td class="num">100%</td></tr><tr class="hot"><td class="mono">09h</td><td class="num">57</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:16.4%;background:#317b62"></div></div></td>
+          <td class="num">77%</td></tr><tr class="hot"><td class="mono">10h</td><td class="num">247</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:71.0%;background:#317b62"></div></div></td>
+          <td class="num">57%</td></tr><tr><td class="mono">11h</td><td class="num">348</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:100.0%;background:#317b62"></div></div></td>
+          <td class="num">47%</td></tr><tr><td class="mono">12h</td><td class="num">346</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:99.4%;background:#317b62"></div></div></td>
+          <td class="num">45%</td></tr><tr><td class="mono">13h</td><td class="num">297</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:85.3%;background:#317b62"></div></div></td>
+          <td class="num">46%</td></tr><tr><td class="mono">14h</td><td class="num">263</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:75.6%;background:#317b62"></div></div></td>
+          <td class="num">46%</td></tr><tr class="hot"><td class="mono">15h</td><td class="num">210</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:60.3%;background:#317b62"></div></div></td>
+          <td class="num">56%</td></tr><tr class="hot"><td class="mono">16h</td><td class="num">186</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:53.4%;background:#317b62"></div></div></td>
+          <td class="num">56%</td></tr><tr><td class="mono">17h</td><td class="num">220</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:63.2%;background:#317b62"></div></div></td>
+          <td class="num">44%</td></tr><tr><td class="mono">18h</td><td class="num">136</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:39.1%;background:#317b62"></div></div></td>
+          <td class="num">46%</td></tr><tr class="hot"><td class="mono">19h</td><td class="num">56</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:16.1%;background:#317b62"></div></div></td>
+          <td class="num">64%</td></tr><tr><td class="mono">20h</td><td class="num">9</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:2.6%;background:#317b62"></div></div></td>
+          <td class="num">100%</td></tr><tr><td class="mono">21h</td><td class="num">1</td>
+          <td style="width:55%"><div class="bar"><div class="fill" style="width:0.3%;background:#317b62"></div></div></td>
+          <td class="num">100%</td></tr></tbody></table>
+    </div>
+    <div>
+      <div class="panel">
+        <h2>Motivos de llamada perdida</h2>
+        <table><tbody><tr><td>Agentes no contestaron</td><td class="num">731</td>
+          <td style="width:50%"><div class="bar"><div class="fill" style="width:100.0%;background:#b13f32"></div></div></td></tr><tr><td>Colgaron en el menú (IVR)</td><td class="num">231</td>
+          <td style="width:50%"><div class="bar"><div class="fill" style="width:31.6%;background:#b13f32"></div></div></td></tr><tr><td>Colgaron enseguida</td><td class="num">127</td>
+          <td style="width:50%"><div class="bar"><div class="fill" style="width:17.4%;background:#b13f32"></div></div></td></tr><tr><td>Sin agente disponible</td><td class="num">59</td>
+          <td style="width:50%"><div class="bar"><div class="fill" style="width:8.1%;background:#b13f32"></div></div></td></tr><tr><td>Colgaron en espera</td><td class="num">43</td>
+          <td style="width:50%"><div class="bar"><div class="fill" style="width:5.9%;background:#b13f32"></div></div></td></tr></tbody></table>
+      </div>
+      <div class="panel">
+        <h2>Por día de la semana</h2>
+        <table><tbody><tr><td class="mono">Lun</td><td class="num">489</td>
+          <td><div class="bar"><div class="fill" style="width:90.4%;background:#6f5a9c"></div></div></td></tr><tr><td class="mono">Mar</td><td class="num">541</td>
+          <td><div class="bar"><div class="fill" style="width:100.0%;background:#6f5a9c"></div></div></td></tr><tr><td class="mono">Mié</td><td class="num">476</td>
+          <td><div class="bar"><div class="fill" style="width:88.0%;background:#6f5a9c"></div></div></td></tr><tr><td class="mono">Jue</td><td class="num">455</td>
+          <td><div class="bar"><div class="fill" style="width:84.1%;background:#6f5a9c"></div></div></td></tr><tr><td class="mono">Vie</td><td class="num">389</td>
+          <td><div class="bar"><div class="fill" style="width:71.9%;background:#6f5a9c"></div></div></td></tr><tr><td class="mono">Sáb</td><td class="num">18</td>
+          <td><div class="bar"><div class="fill" style="width:3.3%;background:#6f5a9c"></div></div></td></tr><tr><td class="mono">Dom</td><td class="num">12</td>
+          <td><div class="bar"><div class="fill" style="width:2.2%;background:#6f5a9c"></div></div></td></tr></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <div class="panel full">
+    <h2>Actividad por agente · llamadas gestionadas (ambas direcciones) y duración media</h2>
+    <table><tbody><tr><td>Manuela Marín</td><td class="num">902</td>
+          <td style="width:45%"><div class="bar"><div class="fill" style="width:100.0%;background:#c89a3a"></div></div></td>
+          <td class="mono num">3m24s</td></tr><tr><td>Carmen Crespo</td><td class="num">709</td>
+          <td style="width:45%"><div class="bar"><div class="fill" style="width:78.6%;background:#c89a3a"></div></div></td>
+          <td class="mono num">3m37s</td></tr><tr><td>Logística MJ-MV1</td><td class="num">634</td>
+          <td style="width:45%"><div class="bar"><div class="fill" style="width:70.3%;background:#c89a3a"></div></div></td>
+          <td class="mono num">1m16s</td></tr></tbody></table>
+  </div>
+
+  <div class="foot">Generado por dashboards/build-aircall.py · datos de apis/aircall-read.py sync · franjas en hora peninsular</div>
+</div></body></html>
